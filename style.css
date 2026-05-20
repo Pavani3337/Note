@@ -1,0 +1,55 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+    text-align: center;
+}
+
+.container {
+    padding: 20px;
+}
+
+.inputBox input,
+textarea {
+    width: 300px;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+}
+
+textarea {
+    height: 80px;
+}
+
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+#notesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.note {
+    background: rgba(255,255,255,0.1);
+    padding: 15px;
+    margin: 10px;
+    width: 220px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.note:hover {
+    transform: scale(1.05);
+}
+
+.pin {
+    border-left: 5px solid gold;
+}

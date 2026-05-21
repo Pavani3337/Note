@@ -1,6 +1,6 @@
-// =====================
-// DATA
-// =====================
+// ======================
+// STORAGE
+// ======================
 
 let subjects =
 JSON.parse(localStorage.getItem("subjects"))
@@ -8,9 +8,9 @@ JSON.parse(localStorage.getItem("subjects"))
 
 let currentSubject = null;
 
-// =====================
-// SAVE
-// =====================
+// ======================
+// SAVE DATA
+// ======================
 
 function saveData(){
 
@@ -20,14 +20,16 @@ function saveData(){
     );
 }
 
-// =====================
+// ======================
 // ADD SUBJECT
-// =====================
+// ======================
 
 function addSubject(){
 
     let input =
-    document.getElementById("subjectInput");
+    document.getElementById(
+        "subjectInput"
+    );
 
     let name =
     input.value.trim();
@@ -52,9 +54,25 @@ function addSubject(){
     renderSubjects();
 }
 
-// =====================
+// ======================
+// DELETE SUBJECT
+// ======================
+
+function deleteSubject(id){
+
+    subjects =
+    subjects.filter(
+        subject=>subject.id!==id
+    );
+
+    saveData();
+
+    renderSubjects();
+}
+
+// ======================
 // RENDER SUBJECTS
-// =====================
+// ======================
 
 function renderSubjects(){
 
@@ -63,7 +81,7 @@ function renderSubjects(){
         "subjectsContainer"
     );
 
-    container.innerHTML = "";
+    container.innerHTML="";
 
     subjects.forEach(subject=>{
 
@@ -73,7 +91,7 @@ function renderSubjects(){
 
             <div
                 class="subjectOpen"
-                data-id="${subject.id}"
+                onclick="openDashboard(${subject.id})"
             >
 
                 <h2>
@@ -88,8 +106,7 @@ function renderSubjects(){
             </div>
 
             <button
-                class="deleteSubjectBtn"
-                data-id="${subject.id}"
+                onclick="deleteSubject(${subject.id})"
             >
                 Delete
             </button>
@@ -97,53 +114,11 @@ function renderSubjects(){
         </div>
         `;
     });
-
-    // OPEN SUBJECT
-    document
-    .querySelectorAll(".subjectOpen")
-    .forEach(item=>{
-
-        item.onclick = function(){
-
-            openDashboard(
-                Number(this.dataset.id)
-            );
-        };
-    });
-
-    // DELETE SUBJECT
-    document
-    .querySelectorAll(".deleteSubjectBtn")
-    .forEach(btn=>{
-
-        btn.onclick = function(){
-
-            deleteSubject(
-                Number(this.dataset.id)
-            );
-        };
-    });
 }
 
-// =====================
-// DELETE SUBJECT
-// =====================
-
-function deleteSubject(id){
-
-    subjects =
-    subjects.filter(
-        subject=>subject.id!==id
-    );
-
-    saveData();
-
-    renderSubjects();
-}
-
-// =====================
+// ======================
 // OPEN DASHBOARD
-// =====================
+// ======================
 
 function openDashboard(id){
 
@@ -168,9 +143,9 @@ function openDashboard(id){
     renderNotes();
 }
 
-// =====================
+// ======================
 // GO HOME
-// =====================
+// ======================
 
 function goHome(){
 
@@ -185,9 +160,9 @@ function goHome(){
     renderSubjects();
 }
 
-// =====================
+// ======================
 // SAVE NOTE
-// =====================
+// ======================
 
 function saveNote(){
 
@@ -212,7 +187,9 @@ function saveNote(){
 
         content:content,
 
-        pinned:false
+        pinned:false,
+
+        date:new Date().toLocaleString()
     });
 
     document.getElementById(
@@ -228,9 +205,9 @@ function saveNote(){
     renderNotes();
 }
 
-// =====================
+// ======================
 // RENDER NOTES
-// =====================
+// ======================
 
 function renderNotes(filteredNotes){
 
@@ -246,6 +223,7 @@ function renderNotes(filteredNotes){
     ||
     [...currentSubject.notes];
 
+    // PINNED FIRST
     notes.sort((a,b)=>
         b.pinned-a.pinned
     );
@@ -268,25 +246,26 @@ function renderNotes(filteredNotes){
                 ${note.content}
             </p>
 
+            <small>
+                📅 ${note.date}
+            </small>
+
+            <br><br>
+
             <button
-                class="pinBtn"
-                data-id="${note.id}"
+                onclick="togglePin(${note.id})"
             >
-
                 ${note.pinned ? "Unpin":"Pin"}
-
             </button>
 
             <button
-                class="editBtn"
-                data-id="${note.id}"
+                onclick="editNote(${note.id})"
             >
                 Edit
             </button>
 
             <button
-                class="deleteBtn"
-                data-id="${note.id}"
+                onclick="deleteNote(${note.id})"
             >
                 Delete
             </button>
@@ -294,50 +273,11 @@ function renderNotes(filteredNotes){
         </div>
         `;
     });
-
-    // PIN
-    document
-    .querySelectorAll(".pinBtn")
-    .forEach(btn=>{
-
-        btn.onclick = function(){
-
-            togglePin(
-                Number(this.dataset.id)
-            );
-        };
-    });
-
-    // EDIT
-    document
-    .querySelectorAll(".editBtn")
-    .forEach(btn=>{
-
-        btn.onclick = function(){
-
-            editNote(
-                Number(this.dataset.id)
-            );
-        };
-    });
-
-    // DELETE
-    document
-    .querySelectorAll(".deleteBtn")
-    .forEach(btn=>{
-
-        btn.onclick = function(){
-
-            deleteNote(
-                Number(this.dataset.id)
-            );
-        };
-    });
 }
 
-// =====================
+// ======================
 // DELETE NOTE
-// =====================
+// ======================
 
 function deleteNote(id){
 
@@ -351,9 +291,9 @@ function deleteNote(id){
     renderNotes();
 }
 
-// =====================
+// ======================
 // PIN NOTE
-// =====================
+// ======================
 
 function togglePin(id){
 
@@ -369,9 +309,9 @@ function togglePin(id){
     renderNotes();
 }
 
-// =====================
+// ======================
 // EDIT NOTE
-// =====================
+// ======================
 
 function editNote(id){
 
@@ -405,9 +345,9 @@ function editNote(id){
     renderNotes();
 }
 
-// =====================
-// SEARCH
-// =====================
+// ======================
+// SEARCH NOTES
+// ======================
 
 function searchNotes(){
 
@@ -416,28 +356,40 @@ function searchNotes(){
         "searchInput"
     )
     .value
+    .trim()
     .toLowerCase();
 
+    // EMPTY SEARCH
+    if(text===""){
+
+        renderNotes();
+
+        return;
+    }
+
     let filtered =
-    currentSubject.notes.filter(note=>
+    currentSubject.notes.filter(note=>{
 
-        note.title
-        .toLowerCase()
-        .includes(text)
+        return(
 
-        ||
+            note.title
+            .toLowerCase()
+            .includes(text)
 
-        note.content
-        .toLowerCase()
-        .includes(text)
-    );
+            ||
+
+            note.content
+            .toLowerCase()
+            .includes(text)
+        );
+    });
 
     renderNotes(filtered);
 }
 
-// =====================
+// ======================
 // BUTTON EVENTS
-// =====================
+// ======================
 
 document.getElementById(
     "addSubjectBtn"
@@ -453,10 +405,13 @@ document.getElementById(
 
 document.getElementById(
     "searchInput"
-).onkeyup = searchNotes;
+).addEventListener(
+    "keyup",
+    searchNotes
+);
 
-// =====================
-// START
-// =====================
+// ======================
+// START APP
+// ======================
 
 renderSubjects();

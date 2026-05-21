@@ -12,17 +12,17 @@
 </head>
 <body>
 
-<!-- HOME -->
+<!-- HOME PAGE -->
 <div id="homePage">
 
     <h1>📝 Notes Organizer</h1>
 
-    <div class="top">
+    <div class="topBox">
 
         <input
             type="text"
             id="subjectInput"
-            placeholder="Enter Subject"
+            placeholder="Enter Subject Name"
         >
 
         <button id="addSubjectBtn">
@@ -31,7 +31,7 @@
 
     </div>
 
-    <div id="subjects"></div>
+    <div id="subjectsContainer"></div>
 
 </div>
 
@@ -42,19 +42,12 @@
         ⬅ Back
     </button>
 
-    <h1 id="dashboardTitle"></h1>
+    <h1 id="subjectTitle"></h1>
 
+    <!-- ADD NOTE -->
     <div class="section">
 
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search Notes"
-        >
-
-    </div>
-
-    <div class="section">
+        <h2>➕ Add Note</h2>
 
         <input
             type="text"
@@ -64,7 +57,7 @@
 
         <textarea
             id="noteContent"
-            placeholder="Write your note"
+            placeholder="Write your note..."
         ></textarea>
 
         <button id="saveNoteBtn">
@@ -73,10 +66,14 @@
 
     </div>
 
-    <div
-        class="section"
-        id="notesContainer"
-    ></div>
+    <!-- NOTES -->
+    <div class="section">
+
+        <h2>📋 Notes</h2>
+
+        <div id="notesContainer"></div>
+
+    </div>
 
 </div>
 

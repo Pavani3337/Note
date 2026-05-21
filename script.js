@@ -1,18 +1,16 @@
-// =====================
-// DATA
-// =====================
+// ======================
+// STORAGE
+// ======================
 
 let subjects =
-JSON.parse(
-    localStorage.getItem("subjects")
-)
+JSON.parse(localStorage.getItem("subjects"))
 || [];
 
 let currentSubjectId = null;
 
-// =====================
-// SAVE
-// =====================
+// ======================
+// SAVE DATA
+// ======================
 
 function saveData(){
 
@@ -22,50 +20,9 @@ function saveData(){
     );
 }
 
-// =====================
-// RENDER SUBJECTS
-// =====================
-
-function renderSubjects(){
-
-    let container =
-    document.getElementById("subjects");
-
-    container.innerHTML = "";
-
-    subjects.forEach(subject=>{
-
-        container.innerHTML += `
-
-        <div class="card">
-
-            <h2>${subject.name}</h2>
-
-            <p>
-                Notes:
-                ${subject.notes.length}
-            </p>
-
-            <button
-                onclick="openSubject(${subject.id})"
-            >
-                Open
-            </button>
-
-            <button
-                onclick="deleteSubject(${subject.id})"
-            >
-                Delete
-            </button>
-
-        </div>
-        `;
-    });
-}
-
-// =====================
+// ======================
 // ADD SUBJECT
-// =====================
+// ======================
 
 document.getElementById(
     "addSubjectBtn"
@@ -97,11 +54,61 @@ document.getElementById(
     renderSubjects();
 };
 
-// =====================
+// ======================
+// RENDER SUBJECTS
+// ======================
+
+function renderSubjects(){
+
+    let container =
+    document.getElementById(
+        "subjectsContainer"
+    );
+
+    container.innerHTML="";
+
+    subjects.forEach(subject=>{
+
+        container.innerHTML += `
+
+        <div class="subjectCard">
+
+            <h2>
+                📘 ${subject.name}
+            </h2>
+
+            <p>
+                Notes:
+                ${subject.notes.length}
+            </p>
+
+            <button
+                onclick="openSubject(${subject.id})"
+            >
+                Open
+            </button>
+
+            <button
+                onclick="deleteSubject(${subject.id})"
+            >
+                Delete
+            </button>
+
+        </div>
+        `;
+    });
+}
+
+// ======================
 // DELETE SUBJECT
-// =====================
+// ======================
 
 function deleteSubject(id){
+
+    let confirmDelete =
+    confirm("Delete Subject?");
+
+    if(!confirmDelete) return;
 
     subjects =
     subjects.filter(
@@ -113,9 +120,9 @@ function deleteSubject(id){
     renderSubjects();
 }
 
-// =====================
+// ======================
 // OPEN SUBJECT
-// =====================
+// ======================
 
 function openSubject(id){
 
@@ -123,7 +130,7 @@ function openSubject(id){
 
     let subject =
     subjects.find(
-        s=>s.id===id
+        subject=>subject.id===id
     );
 
     document.getElementById(
@@ -135,16 +142,16 @@ function openSubject(id){
     ).style.display="block";
 
     document.getElementById(
-        "dashboardTitle"
+        "subjectTitle"
     ).innerText =
-    subject.name;
+    "📘 " + subject.name;
 
     renderNotes();
 }
 
-// =====================
-// BACK
-// =====================
+// ======================
+// BACK BUTTON
+// ======================
 
 document.getElementById(
     "backBtn"
@@ -161,9 +168,9 @@ document.getElementById(
     renderSubjects();
 };
 
-// =====================
+// ======================
 // SAVE NOTE
-// =====================
+// ======================
 
 document.getElementById(
     "saveNoteBtn"
@@ -184,7 +191,8 @@ document.getElementById(
 
     let subject =
     subjects.find(
-        s=>s.id===currentSubjectId
+        subject=>
+        subject.id===currentSubjectId
     );
 
     subject.notes.push({
@@ -195,7 +203,9 @@ document.getElementById(
 
         content:content,
 
-        pinned:false
+        pinned:false,
+
+        date:new Date().toLocaleString()
     });
 
     document.getElementById(
@@ -211,26 +221,32 @@ document.getElementById(
     renderNotes();
 };
 
-// =====================
+// ======================
 // RENDER NOTES
-// =====================
+// ======================
 
-function renderNotes(filtered){
+function renderNotes(){
 
     let container =
     document.getElementById(
         "notesContainer"
     );
 
-    container.innerHTML = "";
+    container.innerHTML="";
 
     let subject =
     subjects.find(
-        s=>s.id===currentSubjectId
+        subject=>
+        subject.id===currentSubjectId
     );
 
     let notes =
-    filtered || subject.notes;
+    [...subject.notes];
+
+    // PINNED FIRST
+    notes.sort((a,b)=>
+        b.pinned-a.pinned
+    );
 
     notes.forEach(note=>{
 
@@ -250,10 +266,18 @@ function renderNotes(filtered){
                 ${note.content}
             </p>
 
+            <small>
+                📅 ${note.date}
+            </small>
+
+            <br><br>
+
             <button
-                onclick="pinNote(${note.id})"
+                onclick="togglePin(${note.id})"
             >
+
                 ${note.pinned ? "Unpin":"Pin"}
+
             </button>
 
             <button
@@ -273,15 +297,16 @@ function renderNotes(filtered){
     });
 }
 
-// =====================
+// ======================
 // DELETE NOTE
-// =====================
+// ======================
 
 function deleteNote(id){
 
     let subject =
     subjects.find(
-        s=>s.id===currentSubjectId
+        subject=>
+        subject.id===currentSubjectId
     );
 
     subject.notes =
@@ -294,20 +319,21 @@ function deleteNote(id){
     renderNotes();
 }
 
-// =====================
+// ======================
 // PIN NOTE
-// =====================
+// ======================
 
-function pinNote(id){
+function togglePin(id){
 
     let subject =
     subjects.find(
-        s=>s.id===currentSubjectId
+        subject=>
+        subject.id===currentSubjectId
     );
 
     let note =
     subject.notes.find(
-        n=>n.id===id
+        note=>note.id===id
     );
 
     note.pinned = !note.pinned;
@@ -317,85 +343,50 @@ function pinNote(id){
     renderNotes();
 }
 
-// =====================
+// ======================
 // EDIT NOTE
-// =====================
+// ======================
 
 function editNote(id){
 
     let subject =
     subjects.find(
-        s=>s.id===currentSubjectId
+        subject=>
+        subject.id===currentSubjectId
     );
 
     let note =
     subject.notes.find(
-        n=>n.id===id
+        note=>note.id===id
     );
 
-    let title =
+    let newTitle =
     prompt(
         "Edit Title",
         note.title
     );
 
-    if(title===null) return;
+    if(newTitle===null) return;
 
-    let content =
+    let newContent =
     prompt(
         "Edit Content",
         note.content
     );
 
-    if(content===null) return;
+    if(newContent===null) return;
 
-    note.title = title;
+    note.title = newTitle;
 
-    note.content = content;
+    note.content = newContent;
 
     saveData();
 
     renderNotes();
 }
 
-// =====================
-// SEARCH
-// =====================
-
-document.getElementById(
-    "searchInput"
-).addEventListener(
-    "keyup",
-    function(){
-
-        let text =
-        this.value.toLowerCase();
-
-        let subject =
-        subjects.find(
-            s=>s.id===currentSubjectId
-        );
-
-        let filtered =
-        subject.notes.filter(note=>
-
-            note.title
-            .toLowerCase()
-            .includes(text)
-
-            ||
-
-            note.content
-            .toLowerCase()
-            .includes(text)
-        );
-
-        renderNotes(filtered);
-    }
-);
-
-// =====================
+// ======================
 // START
-// =====================
+// ======================
 
 renderSubjects();

@@ -1,12 +1,12 @@
 // ======================
-// DATA
+// STORAGE
 // ======================
 
 let subjects =
 JSON.parse(localStorage.getItem("subjects"))
 || [];
 
-let currentSubjectIndex = null;
+let currentSubject = null;
 
 // ======================
 // SAVE DATA
@@ -29,11 +29,14 @@ function addSubject(){
     let input =
     document.getElementById("subjectInput");
 
-    let name = input.value.trim();
+    let name =
+    input.value.trim();
 
     if(name==="") return;
 
     subjects.push({
+
+        id:Date.now(),
 
         name:name,
 
@@ -51,19 +54,16 @@ function addSubject(){
 // DELETE SUBJECT
 // ======================
 
-function deleteSubject(index){
+function deleteSubject(id){
 
-    let confirmDelete =
-    confirm("Delete this subject?");
+    subjects =
+    subjects.filter(
+        subject=>subject.id!==id
+    );
 
-    if(confirmDelete){
+    saveData();
 
-        subjects.splice(index,1);
-
-        saveData();
-
-        renderSubjects();
-    }
+    renderSubjects();
 }
 
 // ======================
@@ -73,19 +73,21 @@ function deleteSubject(index){
 function renderSubjects(){
 
     let container =
-    document.getElementById("subjectsContainer");
+    document.getElementById(
+        "subjectsContainer"
+    );
 
-    container.innerHTML="";
+    container.innerHTML = "";
 
-    subjects.forEach((subject,index)=>{
+    subjects.forEach(subject=>{
 
         container.innerHTML += `
 
         <div class="subjectCard">
 
             <div
-                onclick="openDashboard(${index})"
-                style="cursor:pointer;"
+                class="subjectOpen"
+                onclick="openDashboard(${subject.id})"
             >
 
                 <h2>
@@ -100,7 +102,7 @@ function renderSubjects(){
             </div>
 
             <button
-                onclick="deleteSubject(${index})"
+                onclick="deleteSubject(${subject.id})"
             >
                 Delete
             </button>
@@ -114,22 +116,25 @@ function renderSubjects(){
 // OPEN DASHBOARD
 // ======================
 
-function openDashboard(index){
+function openDashboard(id){
 
-    currentSubjectIndex = index;
+    currentSubject =
+    subjects.find(
+        subject=>subject.id===id
+    );
 
     document.getElementById(
         "homeScreen"
-    ).style.display = "none";
+    ).style.display="none";
 
     document.getElementById(
         "dashboardScreen"
-    ).style.display = "block";
+    ).style.display="block";
 
     document.getElementById(
         "subjectTitle"
     ).innerText =
-    "📘 " + subjects[index].name;
+    "📘 " + currentSubject.name;
 
     renderNotes();
 }
@@ -142,11 +147,11 @@ function goHome(){
 
     document.getElementById(
         "dashboardScreen"
-    ).style.display = "none";
+    ).style.display="none";
 
     document.getElementById(
         "homeScreen"
-    ).style.display = "block";
+    ).style.display="block";
 
     renderSubjects();
 }
@@ -158,21 +163,19 @@ function goHome(){
 function saveNote(){
 
     let title =
-    document.getElementById("noteTitle")
-    .value
-    .trim();
+    document.getElementById(
+        "noteTitle"
+    ).value.trim();
 
     let content =
-    document.getElementById("noteContent")
-    .value
-    .trim();
+    document.getElementById(
+        "noteContent"
+    ).value.trim();
 
-    if(title==="" || content==="") return;
+    if(title==="" || content==="")
+    return;
 
-    let subject =
-    subjects[currentSubjectIndex];
-
-    subject.notes.push({
+    currentSubject.notes.push({
 
         id:Date.now(),
 
@@ -202,21 +205,24 @@ function saveNote(){
 // RENDER NOTES
 // ======================
 
-function renderNotes(filtered=null){
+function renderNotes(filteredNotes){
 
     let container =
-    document.getElementById("notesContainer");
+    document.getElementById(
+        "notesContainer"
+    );
 
     container.innerHTML="";
 
-    let subject =
-    subjects[currentSubjectIndex];
-
     let notes =
-    filtered || [...subject.notes];
+    filteredNotes
+    ||
+    [...currentSubject.notes];
 
-    // pinned first
-    notes.sort((a,b)=>b.pinned-a.pinned);
+    // PINNED FIRST
+    notes.sort((a,b)=>
+        b.pinned-a.pinned
+    );
 
     notes.forEach(note=>{
 
@@ -245,7 +251,9 @@ function renderNotes(filtered=null){
             <button
                 onclick="togglePin(${note.id})"
             >
+
                 ${note.pinned ? "Unpin":"Pin"}
+
             </button>
 
             <button
@@ -269,12 +277,9 @@ function renderNotes(filtered=null){
 // FIND NOTE
 // ======================
 
-function findNote(id){
+function getNote(id){
 
-    let subject =
-    subjects[currentSubjectIndex];
-
-    return subject.notes.find(
+    return currentSubject.notes.find(
         note=>note.id===id
     );
 }
@@ -285,11 +290,8 @@ function findNote(id){
 
 function deleteNote(id){
 
-    let subject =
-    subjects[currentSubjectIndex];
-
-    subject.notes =
-    subject.notes.filter(
+    currentSubject.notes =
+    currentSubject.notes.filter(
         note=>note.id!==id
     );
 
@@ -304,7 +306,7 @@ function deleteNote(id){
 
 function togglePin(id){
 
-    let note = findNote(id);
+    let note = getNote(id);
 
     note.pinned = !note.pinned;
 
@@ -319,7 +321,7 @@ function togglePin(id){
 
 function editNote(id){
 
-    let note = findNote(id);
+    let note = getNote(id);
 
     let newTitle =
     prompt(
@@ -327,25 +329,23 @@ function editNote(id){
         note.title
     );
 
+    if(newTitle===null) return;
+
     let newContent =
     prompt(
         "Edit Content",
         note.content
     );
 
-    if(
-        newTitle!==null &&
-        newContent!==null
-    ){
+    if(newContent===null) return;
 
-        note.title = newTitle;
+    note.title = newTitle;
 
-        note.content = newContent;
+    note.content = newContent;
 
-        saveData();
+    saveData();
 
-        renderNotes();
-    }
+    renderNotes();
 }
 
 // ======================
@@ -355,15 +355,14 @@ function editNote(id){
 function searchNotes(){
 
     let text =
-    document.getElementById("searchInput")
+    document.getElementById(
+        "searchInput"
+    )
     .value
     .toLowerCase();
 
-    let subject =
-    subjects[currentSubjectIndex];
-
     let filtered =
-    subject.notes.filter(note=>
+    currentSubject.notes.filter(note=>
 
         note.title
         .toLowerCase()
@@ -380,7 +379,7 @@ function searchNotes(){
 }
 
 // ======================
-// INIT
+// START APP
 // ======================
 
 renderSubjects();

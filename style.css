@@ -1,55 +1,83 @@
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #0f172a;
-    color: white;
-    text-align: center;
+body{
+    margin:0;
+    font-family:Arial;
+    background:linear-gradient(135deg,#0f172a,#1e293b);
+    color:white;
 }
 
-.container {
-    padding: 20px;
+h1,h2{
+    text-align:center;
 }
 
-.inputBox input,
-textarea {
-    width: 300px;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 8px;
-    border: none;
+.addSubject{
+    text-align:center;
+    margin:20px;
 }
 
-textarea {
-    height: 80px;
+input,
+textarea{
+    width:300px;
+    padding:12px;
+    margin:10px;
+    border:none;
+    border-radius:10px;
 }
 
-button {
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin: 5px;
+textarea{
+    height:120px;
 }
 
-#notesContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+button{
+    padding:10px 15px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    margin:5px;
 }
 
-.note {
-    background: rgba(255,255,255,0.1);
-    padding: 15px;
-    margin: 10px;
-    width: 220px;
-    border-radius: 10px;
-    transition: 0.3s;
+#subjectsContainer{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
 }
 
-.note:hover {
-    transform: scale(1.05);
+.subjectCard{
+    background:rgba(255,255,255,0.1);
+    width:220px;
+    padding:20px;
+    margin:15px;
+    border-radius:15px;
+    text-align:center;
+    cursor:pointer;
+    transition:0.3s;
+    backdrop-filter:blur(10px);
 }
 
-.pin {
-    border-left: 5px solid gold;
+.subjectCard:hover{
+    transform:scale(1.05);
+}
+
+.section{
+    background:rgba(255,255,255,0.08);
+    width:90%;
+    max-width:800px;
+    margin:20px auto;
+    padding:20px;
+    border-radius:15px;
+}
+
+.note{
+    background:rgba(255,255,255,0.1);
+    padding:15px;
+    margin-top:15px;
+    border-radius:10px;
+}
+
+.pinned{
+    border:2px solid gold;
+}
+
+small{
+    color:#ddd;
 }

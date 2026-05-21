@@ -1,90 +1,343 @@
-let notes = JSON.parse(localStorage.getItem("notes")) || [];
+// ======================
+// DATA
+// ======================
 
+let subjects =
+JSON.parse(localStorage.getItem("subjects"))
+|| [];
+
+let currentSubject = null;
+
+// ======================
 // SAVE
-function save() {
-    localStorage.setItem("notes", JSON.stringify(notes));
+// ======================
+
+function saveData(){
+
+    localStorage.setItem(
+        "subjects",
+        JSON.stringify(subjects)
+    );
 }
 
-// ADD NOTE
-function addNote() {
+// ======================
+// ADD SUBJECT
+// ======================
 
-    let title = document.getElementById("title").value.trim();
-    let content = document.getElementById("content").value.trim();
+function addSubject(){
 
-    if (!title || !content) return;
+    let input =
+    document.getElementById("subjectInput");
 
-    notes.push({
-        title,
-        content,
-        pinned: false,
-        time: new Date().toLocaleString()
+    let name = input.value.trim();
+
+    if(!name) return;
+
+    subjects.push({
+
+        name:name,
+
+        notes:[]
     });
 
-    document.getElementById("title").value = "";
-    document.getElementById("content").value = "";
+    input.value="";
 
-    save();
-    render();
+    saveData();
+
+    renderSubjects();
 }
 
-// DELETE
-function deleteNote(i) {
-    notes.splice(i, 1);
-    save();
-    render();
+// ======================
+// DELETE SUBJECT
+// ======================
+
+function deleteSubject(index){
+
+    let confirmDelete =
+    confirm("Delete this subject?");
+
+    if(confirmDelete){
+
+        subjects.splice(index,1);
+
+        saveData();
+
+        renderSubjects();
+    }
 }
 
-// PIN NOTE
-function pinNote(i) {
-    notes[i].pinned = !notes[i].pinned;
-    save();
-    render();
-}
+// ======================
+// RENDER SUBJECTS
+// ======================
 
-// SEARCH
-function searchNotes() {
+function renderSubjects(){
 
-    let val = document.getElementById("search").value.toLowerCase();
+    let container =
+    document.getElementById("subjectsContainer");
 
-    let filtered = notes.filter(n =>
-        n.title.toLowerCase().includes(val) ||
-        n.content.toLowerCase().includes(val)
-    );
+    container.innerHTML="";
 
-    render(filtered);
-}
-
-// RENDER
-function render(list = notes) {
-
-    let container = document.getElementById("notesContainer");
-
-    container.innerHTML = "";
-
-    // pinned first
-    list.sort((a,b) => b.pinned - a.pinned);
-
-    list.forEach((n, i) => {
+    subjects.forEach((sub,index)=>{
 
         container.innerHTML += `
-        <div class="note ${n.pinned ? "pin" : ""}">
 
-            <h3>${n.title}</h3>
+        <div class="subjectCard">
 
-            <p>${n.content}</p>
+            <div onclick="openDashboard(${index})">
 
-            <small>${n.time}</small><br><br>
+                <h2>📘 ${sub.name}</h2>
 
-            <button onclick="pinNote(${i})">
-                ${n.pinned ? "Unpin" : "Pin"}
+                <p>
+                    Notes:
+                    ${sub.notes.length}
+                </p>
+
+            </div>
+
+            <button onclick="deleteSubject(${index})">
+                Delete
             </button>
-
-            <button onclick="deleteNote(${i})">Delete</button>
 
         </div>
         `;
     });
 }
 
+// ======================
+// OPEN SUBJECT
+// ======================
+
+function openDashboard(index){
+
+    currentSubject = subjects[index];
+
+    document.getElementById(
+        "homeScreen"
+    ).style.display="none";
+
+    document.getElementById(
+        "dashboardScreen"
+    ).style.display="block";
+
+    document.getElementById(
+        "subjectTitle"
+    ).innerText =
+    "📘 " + currentSubject.name;
+
+    renderNotes();
+}
+
+// ======================
+// BACK HOME
+// ======================
+
+function goHome(){
+
+    document.getElementById(
+        "dashboardScreen"
+    ).style.display="none";
+
+    document.getElementById(
+        "homeScreen"
+    ).style.display="block";
+
+    renderSubjects();
+}
+
+// ======================
+// SAVE NOTE
+// ======================
+
+function saveNote(){
+
+    let title =
+    document.getElementById("noteTitle")
+    .value
+    .trim();
+
+    let content =
+    document.getElementById("noteContent")
+    .value
+    .trim();
+
+    if(!title || !content) return;
+
+    currentSubject.notes.push({
+
+        title:title,
+
+        content:content,
+
+        pinned:false,
+
+        date:new Date().toLocaleString()
+    });
+
+    document.getElementById(
+        "noteTitle"
+    ).value="";
+
+    document.getElementById(
+        "noteContent"
+    ).value="";
+
+    saveData();
+
+    renderNotes();
+}
+
+// ======================
+// RENDER NOTES
+// ======================
+
+function renderNotes(filteredNotes=null){
+
+    let container =
+    document.getElementById("notesContainer");
+
+    container.innerHTML="";
+
+    let notesToShow =
+    filteredNotes || currentSubject.notes;
+
+    // PINNED FIRST
+    notesToShow.sort((a,b)=>
+        b.pinned - a.pinned
+    );
+
+    notesToShow.forEach((note,index)=>{
+
+        container.innerHTML += `
+
+        <div class="
+            note
+            ${note.pinned ? "pinned":""}
+        ">
+
+            <h3>
+                ${note.pinned ? "📌":""}
+                ${note.title}
+            </h3>
+
+            <p>
+                ${note.content}
+            </p>
+
+            <small>
+                📅 ${note.date}
+            </small>
+
+            <br><br>
+
+            <button onclick="togglePin(${index})">
+
+                ${note.pinned ? "Unpin":"Pin"}
+
+            </button>
+
+            <button onclick="editNote(${index})">
+
+                Edit
+
+            </button>
+
+            <button onclick="deleteNote(${index})">
+
+                Delete
+
+            </button>
+
+        </div>
+        `;
+    });
+}
+
+// ======================
+// DELETE NOTE
+// ======================
+
+function deleteNote(index){
+
+    currentSubject.notes.splice(index,1);
+
+    saveData();
+
+    renderNotes();
+}
+
+// ======================
+// PIN NOTE
+// ======================
+
+function togglePin(index){
+
+    currentSubject.notes[index].pinned =
+    !currentSubject.notes[index].pinned;
+
+    saveData();
+
+    renderNotes();
+}
+
+// ======================
+// EDIT NOTE
+// ======================
+
+function editNote(index){
+
+    let note =
+    currentSubject.notes[index];
+
+    let newTitle =
+    prompt(
+        "Edit Title",
+        note.title
+    );
+
+    let newContent =
+    prompt(
+        "Edit Content",
+        note.content
+    );
+
+    if(newTitle && newContent){
+
+        note.title = newTitle;
+
+        note.content = newContent;
+
+        saveData();
+
+        renderNotes();
+    }
+}
+
+// ======================
+// SEARCH NOTES
+// ======================
+
+function searchNotes(){
+
+    let text =
+    document.getElementById("searchInput")
+    .value
+    .toLowerCase();
+
+    let filtered =
+    currentSubject.notes.filter(note=>
+
+        note.title.toLowerCase().includes(text)
+
+        ||
+
+        note.content.toLowerCase().includes(text)
+    );
+
+    renderNotes(filtered);
+}
+
+// ======================
 // INIT
-render();
+// ======================
+
+renderSubjects();

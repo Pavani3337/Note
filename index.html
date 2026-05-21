@@ -12,12 +12,12 @@
 </head>
 <body>
 
-<!-- HOME SCREEN -->
+<!-- HOME -->
 <div id="homeScreen">
 
     <h1>📝 Notes Organizer</h1>
 
-    <div class="addSubject">
+    <div class="topBox">
 
         <input
             type="text"
@@ -25,7 +25,7 @@
             placeholder="Enter Subject Name"
         >
 
-        <button onclick="addSubject()">
+        <button id="addSubjectBtn">
             Add Subject
         </button>
 
@@ -35,10 +35,13 @@
 
 </div>
 
-<!-- SUBJECT DASHBOARD -->
-<div id="dashboardScreen" style="display:none;">
+<!-- DASHBOARD -->
+<div
+    id="dashboardScreen"
+    style="display:none;"
+>
 
-    <button onclick="goHome()">
+    <button id="backBtn">
         ⬅ Back
     </button>
 
@@ -51,7 +54,6 @@
             type="text"
             id="searchInput"
             placeholder="Search Notes..."
-            onkeyup="searchNotes()"
         >
 
     </div>
@@ -69,10 +71,10 @@
 
         <textarea
             id="noteContent"
-            placeholder="Write your notes..."
+            placeholder="Write notes..."
         ></textarea>
 
-        <button onclick="saveNote()">
+        <button id="saveNoteBtn">
             Save Note
         </button>
 

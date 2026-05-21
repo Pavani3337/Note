@@ -1,7 +1,7 @@
 body{
     margin:0;
     font-family:Arial;
-    background:linear-gradient(135deg,#0f172a,#1e293b);
+    background:#0f172a;
     color:white;
 }
 
@@ -9,7 +9,7 @@ h1,h2{
     text-align:center;
 }
 
-.addSubject{
+.topBox{
     text-align:center;
     margin:20px;
 }
@@ -33,7 +33,6 @@ button{
     border-radius:10px;
     cursor:pointer;
     font-weight:bold;
-    margin:5px;
 }
 
 #subjectsContainer{
@@ -43,23 +42,20 @@ button{
 }
 
 .subjectCard{
-    background:rgba(255,255,255,0.1);
+    background:#1e293b;
     width:220px;
     padding:20px;
     margin:15px;
     border-radius:15px;
     text-align:center;
-    cursor:pointer;
-    transition:0.3s;
-    backdrop-filter:blur(10px);
 }
 
-.subjectCard:hover{
-    transform:scale(1.05);
+.subjectOpen{
+    cursor:pointer;
 }
 
 .section{
-    background:rgba(255,255,255,0.08);
+    background:#1e293b;
     width:90%;
     max-width:800px;
     margin:20px auto;
@@ -68,7 +64,7 @@ button{
 }
 
 .note{
-    background:rgba(255,255,255,0.1);
+    background:#334155;
     padding:15px;
     margin-top:15px;
     border-radius:10px;
@@ -76,8 +72,4 @@ button{
 
 .pinned{
     border:2px solid gold;
-}
-
-small{
-    color:#ddd;
 }

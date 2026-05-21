@@ -1,6 +1,6 @@
-// ======================
-// STORAGE
-// ======================
+// =====================
+// DATA
+// =====================
 
 let subjects =
 JSON.parse(localStorage.getItem("subjects"))
@@ -8,9 +8,9 @@ JSON.parse(localStorage.getItem("subjects"))
 
 let currentSubject = null;
 
-// ======================
-// SAVE DATA
-// ======================
+// =====================
+// SAVE
+// =====================
 
 function saveData(){
 
@@ -20,9 +20,9 @@ function saveData(){
     );
 }
 
-// ======================
+// =====================
 // ADD SUBJECT
-// ======================
+// =====================
 
 function addSubject(){
 
@@ -34,14 +34,16 @@ function addSubject(){
 
     if(name==="") return;
 
-    subjects.push({
+    let subject = {
 
         id:Date.now(),
 
         name:name,
 
         notes:[]
-    });
+    };
+
+    subjects.push(subject);
 
     input.value="";
 
@@ -50,25 +52,9 @@ function addSubject(){
     renderSubjects();
 }
 
-// ======================
-// DELETE SUBJECT
-// ======================
-
-function deleteSubject(id){
-
-    subjects =
-    subjects.filter(
-        subject=>subject.id!==id
-    );
-
-    saveData();
-
-    renderSubjects();
-}
-
-// ======================
+// =====================
 // RENDER SUBJECTS
-// ======================
+// =====================
 
 function renderSubjects(){
 
@@ -87,7 +73,7 @@ function renderSubjects(){
 
             <div
                 class="subjectOpen"
-                onclick="openDashboard(${subject.id})"
+                data-id="${subject.id}"
             >
 
                 <h2>
@@ -102,7 +88,8 @@ function renderSubjects(){
             </div>
 
             <button
-                onclick="deleteSubject(${subject.id})"
+                class="deleteSubjectBtn"
+                data-id="${subject.id}"
             >
                 Delete
             </button>
@@ -110,11 +97,53 @@ function renderSubjects(){
         </div>
         `;
     });
+
+    // OPEN SUBJECT
+    document
+    .querySelectorAll(".subjectOpen")
+    .forEach(item=>{
+
+        item.onclick = function(){
+
+            openDashboard(
+                Number(this.dataset.id)
+            );
+        };
+    });
+
+    // DELETE SUBJECT
+    document
+    .querySelectorAll(".deleteSubjectBtn")
+    .forEach(btn=>{
+
+        btn.onclick = function(){
+
+            deleteSubject(
+                Number(this.dataset.id)
+            );
+        };
+    });
 }
 
-// ======================
+// =====================
+// DELETE SUBJECT
+// =====================
+
+function deleteSubject(id){
+
+    subjects =
+    subjects.filter(
+        subject=>subject.id!==id
+    );
+
+    saveData();
+
+    renderSubjects();
+}
+
+// =====================
 // OPEN DASHBOARD
-// ======================
+// =====================
 
 function openDashboard(id){
 
@@ -139,9 +168,9 @@ function openDashboard(id){
     renderNotes();
 }
 
-// ======================
+// =====================
 // GO HOME
-// ======================
+// =====================
 
 function goHome(){
 
@@ -156,9 +185,9 @@ function goHome(){
     renderSubjects();
 }
 
-// ======================
+// =====================
 // SAVE NOTE
-// ======================
+// =====================
 
 function saveNote(){
 
@@ -183,9 +212,7 @@ function saveNote(){
 
         content:content,
 
-        pinned:false,
-
-        date:new Date().toLocaleString()
+        pinned:false
     });
 
     document.getElementById(
@@ -201,9 +228,9 @@ function saveNote(){
     renderNotes();
 }
 
-// ======================
+// =====================
 // RENDER NOTES
-// ======================
+// =====================
 
 function renderNotes(filteredNotes){
 
@@ -219,7 +246,6 @@ function renderNotes(filteredNotes){
     ||
     [...currentSubject.notes];
 
-    // PINNED FIRST
     notes.sort((a,b)=>
         b.pinned-a.pinned
     );
@@ -242,14 +268,9 @@ function renderNotes(filteredNotes){
                 ${note.content}
             </p>
 
-            <small>
-                📅 ${note.date}
-            </small>
-
-            <br><br>
-
             <button
-                onclick="togglePin(${note.id})"
+                class="pinBtn"
+                data-id="${note.id}"
             >
 
                 ${note.pinned ? "Unpin":"Pin"}
@@ -257,13 +278,15 @@ function renderNotes(filteredNotes){
             </button>
 
             <button
-                onclick="editNote(${note.id})"
+                class="editBtn"
+                data-id="${note.id}"
             >
                 Edit
             </button>
 
             <button
-                onclick="deleteNote(${note.id})"
+                class="deleteBtn"
+                data-id="${note.id}"
             >
                 Delete
             </button>
@@ -271,22 +294,50 @@ function renderNotes(filteredNotes){
         </div>
         `;
     });
+
+    // PIN
+    document
+    .querySelectorAll(".pinBtn")
+    .forEach(btn=>{
+
+        btn.onclick = function(){
+
+            togglePin(
+                Number(this.dataset.id)
+            );
+        };
+    });
+
+    // EDIT
+    document
+    .querySelectorAll(".editBtn")
+    .forEach(btn=>{
+
+        btn.onclick = function(){
+
+            editNote(
+                Number(this.dataset.id)
+            );
+        };
+    });
+
+    // DELETE
+    document
+    .querySelectorAll(".deleteBtn")
+    .forEach(btn=>{
+
+        btn.onclick = function(){
+
+            deleteNote(
+                Number(this.dataset.id)
+            );
+        };
+    });
 }
 
-// ======================
-// FIND NOTE
-// ======================
-
-function getNote(id){
-
-    return currentSubject.notes.find(
-        note=>note.id===id
-    );
-}
-
-// ======================
+// =====================
 // DELETE NOTE
-// ======================
+// =====================
 
 function deleteNote(id){
 
@@ -300,13 +351,16 @@ function deleteNote(id){
     renderNotes();
 }
 
-// ======================
-// TOGGLE PIN
-// ======================
+// =====================
+// PIN NOTE
+// =====================
 
 function togglePin(id){
 
-    let note = getNote(id);
+    let note =
+    currentSubject.notes.find(
+        note=>note.id===id
+    );
 
     note.pinned = !note.pinned;
 
@@ -315,13 +369,16 @@ function togglePin(id){
     renderNotes();
 }
 
-// ======================
+// =====================
 // EDIT NOTE
-// ======================
+// =====================
 
 function editNote(id){
 
-    let note = getNote(id);
+    let note =
+    currentSubject.notes.find(
+        note=>note.id===id
+    );
 
     let newTitle =
     prompt(
@@ -348,9 +405,9 @@ function editNote(id){
     renderNotes();
 }
 
-// ======================
-// SEARCH NOTES
-// ======================
+// =====================
+// SEARCH
+// =====================
 
 function searchNotes(){
 
@@ -378,8 +435,28 @@ function searchNotes(){
     renderNotes(filtered);
 }
 
-// ======================
-// START APP
-// ======================
+// =====================
+// BUTTON EVENTS
+// =====================
+
+document.getElementById(
+    "addSubjectBtn"
+).onclick = addSubject;
+
+document.getElementById(
+    "saveNoteBtn"
+).onclick = saveNote;
+
+document.getElementById(
+    "backBtn"
+).onclick = goHome;
+
+document.getElementById(
+    "searchInput"
+).onkeyup = searchNotes;
+
+// =====================
+// START
+// =====================
 
 renderSubjects();

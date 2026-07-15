@@ -243,7 +243,6 @@ function renderNotes(){
     let notes =
     [...subject.notes];
 
-    // PINNED FIRST
     notes.sort((a,b)=>
         b.pinned-a.pinned
     );
@@ -252,34 +251,14 @@ function renderNotes(){
 
         container.innerHTML += `
 
-        <div class="
-            note
-            ${note.pinned ? "pinned":""}
-        ">
+        <div class="note ${note.pinned ? "pinned":""}">
 
             <h3>
                 ${note.pinned ? "📌":""}
                 ${note.title}
             </h3>
 
-            
-let noteDiv = document.createElement("div");
-noteDiv.className = "note" + (note.pinned ? " pinned" : "");
-
-let title = document.createElement("h3");
-title.textContent = (note.pinned ? "📌 " : "") + note.title;
-
-let content = document.createElement("p");
-content.textContent = note.content;
-
-let date = document.createElement("small");
-date.textContent = "📅 " + note.date;
-
-noteDiv.appendChild(title);
-noteDiv.appendChild(content);
-noteDiv.appendChild(date);
-
-container.appendChild(noteDiv);
+            <p>${note.content}</p>
 
             <small>
                 📅 ${note.date}
@@ -287,23 +266,15 @@ container.appendChild(noteDiv);
 
             <br><br>
 
-            <button
-                onclick="togglePin(${note.id})"
-            >
-
+            <button onclick="togglePin(${note.id})">
                 ${note.pinned ? "Unpin":"Pin"}
-
             </button>
 
-            <button
-                onclick="editNote(${note.id})"
-            >
+            <button onclick="editNote(${note.id})">
                 Edit
             </button>
 
-            <button
-                onclick="deleteNote(${note.id})"
-            >
+            <button onclick="deleteNote(${note.id})">
                 Delete
             </button>
 

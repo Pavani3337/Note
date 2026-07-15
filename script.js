@@ -262,9 +262,24 @@ function renderNotes(){
                 ${note.title}
             </h3>
 
-            <p>
-                ${note.content}
-            </p>
+            
+let noteDiv = document.createElement("div");
+noteDiv.className = "note" + (note.pinned ? " pinned" : "");
+
+let title = document.createElement("h3");
+title.textContent = (note.pinned ? "📌 " : "") + note.title;
+
+let content = document.createElement("p");
+content.textContent = note.content;
+
+let date = document.createElement("small");
+date.textContent = "📅 " + note.date;
+
+noteDiv.appendChild(title);
+noteDiv.appendChild(content);
+noteDiv.appendChild(date);
+
+container.appendChild(noteDiv);
 
             <small>
                 📅 ${note.date}

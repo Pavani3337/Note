@@ -65,9 +65,21 @@ function renderSubjects(){
         "subjectsContainer"
     );
 
-    container.innerHTML="";
+container.innerHTML="";
+
+let keyword =
+document.getElementById("searchSubject")
+.value
+.toLowerCase();
 
     subjects.forEach(subject=>{
+
+if(
+!subject.name
+.toLowerCase()
+.includes(keyword)
+)
+return;
 
         container.innerHTML += `
 
@@ -234,6 +246,12 @@ function renderNotes(){
 
     container.innerHTML="";
 
+
+let keyword =
+document.getElementById("noteSearch")
+.value
+.toLowerCase();
+
     let subject =
     subjects.find(
         subject=>
@@ -247,7 +265,18 @@ function renderNotes(){
         b.pinned-a.pinned
     );
 
-    notes.forEach(note=>{
+notes.forEach(note=>{
+
+if(
+!note.title
+.toLowerCase()
+.includes(keyword)
+&&
+!note.content
+.toLowerCase()
+.includes(keyword)
+)
+return;
 
         container.innerHTML += `
 
